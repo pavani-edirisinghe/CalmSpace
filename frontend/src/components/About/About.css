@@ -1,0 +1,100 @@
+.about-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-top: 0rem;
+}
+
+/* Left Image */
+.about-image {
+  flex: 1;
+  position: relative;
+  min-width: 400px;
+  display: flex;
+  justify-content: center;
+}
+
+.about-img {
+  width: 100%;
+  max-width: 600px;
+  border-radius: 15px;
+}
+
+/* Right Content */
+.about-content {
+  flex: 1;
+  min-width: 320px;
+}
+
+.about-content h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #1e2d46;
+}
+
+.about-content p {
+  font-size: 1.1rem;
+  color: #406080;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.about-content ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.about-content ul li {
+  display: flex;
+  align-items: center; /* ✅ ensures icon and text align in one horizontal line */
+  margin-bottom: 1.5rem;
+}
+
+.about-content ul i {
+  flex-shrink: 0;
+  font-size: 2rem;
+  color: #0b57d0;
+  margin-right: 15px;
+  width: 40px; /* ✅ ensures consistent icon width */
+  text-align: center;
+}
+
+.about-content ul div {
+  flex: 1;
+}
+
+.about-content ul h5 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1e2d46;
+  margin-bottom: 0.3rem;
+}
+
+.about-content ul p {
+  font-size: 0.95rem;
+  color: #406080;
+  margin: 0;
+  line-height: 1.5;
+}
+
+
+/* Responsive (stack on smaller screens) */
+@media (max-width: 992px) {
+  .about-row {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .about-content ul li {
+    justify-content: center;
+    text-align: left;
+  }
+
+  .about-image {
+    margin-bottom: 2rem;
+  }
+}

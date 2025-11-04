@@ -1,0 +1,36 @@
+.gallery {
+  padding: 20px 80px;
+  background-color: #f9f9f9;
+}
+
+.section-title h2 {
+  font-weight: 700;
+  font-size: 32px;
+  margin-bottom: 10px;
+  color: #2c4964;
+}
+
+.section-title p {
+  color: #666;
+  font-size: 16px;
+}
+
+.gallery-item {
+  overflow: hidden;
+  position: relative;
+}
+
+.gallery-item img {
+  width: 100%;
+  height: auto;
+  transition: all 0.4s ease-in-out;
+}
+
+.gallery-item:hover img {
+  transform: scale(1.05);
+  opacity: 0.8;
+}
+
+.glightbox {
+  cursor: zoom-in;
+}

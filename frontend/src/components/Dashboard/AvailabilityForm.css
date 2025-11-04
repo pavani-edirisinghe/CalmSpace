@@ -1,0 +1,95 @@
+.form-container,
+.availability-view {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 25px;
+  background: #fdfdfd;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.form-container h2,
+.availability-view h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.availability-view table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.availability-view th,
+.availability-view td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.availability-view th {
+  background-color: #1976d2;
+  color: white;
+  font-weight: 500;
+}
+
+.availability-view td {
+  background-color: #f9f9f9;
+}
+
+.availability-view button {
+  background-color: #1976d2;
+  color: white;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.availability-view button:hover {
+  background-color: #1565c0;
+}
+
+.availability-table {
+  display: grid;
+  grid-template-columns: 1fr 80px 120px 120px;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.table-header {
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 5px;
+  display: contents;
+}
+
+.table-row {
+  display: contents;
+}
+
+input[type="time"] {
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.save-btn {
+  background: #1565c0;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.save-btn:hover {
+  background: #0d47a1;
+  transform: translateY(-1px);
+}

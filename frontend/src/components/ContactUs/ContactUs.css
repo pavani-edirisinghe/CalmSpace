@@ -1,0 +1,12 @@
+.contact-hero-section {
+  padding: 20px 20px 10px;
+  text-align: center;
+  color: #3a22f3;
+  position: relative;
+}
+
+.contact-hero-title {
+  font-size: 3rem;
+  font-weight: 700;
+  text-shadow: 2px 2px 10px rgba(0,0,0,0.4);
+}

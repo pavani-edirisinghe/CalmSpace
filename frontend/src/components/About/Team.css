@@ -1,0 +1,61 @@
+.team-section {
+  padding: 20px 0;
+  background-color: #f8fbff;
+  text-align: center;
+  font-family: "Poppins", sans-serif;
+}
+
+.team-section .section-title {
+  font-size: 2.5rem;
+  color: #2c4964;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.team-section .section-subtitle {
+  color: #6a7b8a;
+  font-size: 1.1rem;
+  margin-bottom: 50px;
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+  justify-content: center;
+  align-items: stretch;
+}
+
+.team-card {
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  padding: 30px 20px;
+  transition: all 0.3s ease;
+}
+
+.team-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+.team-card img {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-bottom: 20px;
+  border: 4px solid #4c9f70;
+}
+
+.team-card h3 {
+  font-size: 1.25rem;
+  color: #2c4964;
+  margin-bottom: 8px;
+}
+
+.team-card p {
+  color: #6a7b8a;
+  font-size: 1rem;
+  margin: 0;
+}
