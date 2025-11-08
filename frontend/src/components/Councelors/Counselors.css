@@ -3,22 +3,20 @@
   margin: 40px 0 20px;
   font-size: 2rem;
 }
-
 .counsellor-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px; 
   padding: 0 40px 60px;
 }
 
 .counsellor-card {
-  background: #fff;
-  border-radius: 15px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
   text-align: center;
 }
-
 .counsellor-img {
   width: 100px;
   height: 100px;
@@ -52,7 +50,8 @@
 }
 
 .profile-icon {
-  font-size: 80px;       /* adjust size as needed */
-  color: #6c63ff;        /* or your theme color */
+  font-size: 80px;       
+  color: #6c63ff;        
   margin-bottom: 10px;
 }
+

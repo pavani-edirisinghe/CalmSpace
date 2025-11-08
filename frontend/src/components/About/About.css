@@ -50,7 +50,7 @@
 
 .about-content ul li {
   display: flex;
-  align-items: center; /* ✅ ensures icon and text align in one horizontal line */
+  align-items: center; 
   margin-bottom: 1.5rem;
 }
 
@@ -59,7 +59,7 @@
   font-size: 2rem;
   color: #0b57d0;
   margin-right: 15px;
-  width: 40px; /* ✅ ensures consistent icon width */
+  width: 40px;
   text-align: center;
 }
 
