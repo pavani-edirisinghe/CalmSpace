@@ -1,3 +1,4 @@
+// FINAL JENKINSFILE — COPY-PASTE THIS INTO YOUR REPO ROOT
 pipeline {
     agent any
     environment {
@@ -7,8 +8,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'master', 
-                    url: 'https://github.com/pavani-edirisinghe/CalmSpace.git'
+                checkout scm
             }
         }
         stage('Build & Push Docker Images') {
@@ -24,27 +24,13 @@ pipeline {
                 '''
             }
         }
-        stage('Deploy to AWS') {
-            steps {
-                withAWS(credentials: 'aws-credentials', region: 'us-east-1') {
-                    sh '''
-                    cd terraform-calmspace
-                    terraform init
-                    terraform apply -auto-approve
-                    PUBLIC_IP=$(terraform output -raw public_ip)
-                    echo "PAVANI'S CALMSPACE IS LIVE AT: http://$PUBLIC_IP:3000"
-                    '''
-                }
-            }
-        }
     }
     post {
         success {
-            script {
-                def ip = sh(script: "cd terraform-calmspace && terraform output -raw public_ip", returnStdout: true).trim()
-                echo "CALMSPACE IS AUTOMATICALLY DEPLOYED!"
-                echo "LIVE AT: http://${ip}:3000"
-            }
+            echo "PAVANI'S DOCKER IMAGES ARE LIVE ON DOCKER HUB!"
+            echo "Backend: https://hub.docker.com/r/pavaniedirisinghe/calmspace-backend"
+            echo "Frontend: https://hub.docker.com/r/pavaniedirisinghe/calmspace-frontend"
+            echo "Now run: cd ~/terraform-calmspace && terraform apply"
         }
     }
 }
