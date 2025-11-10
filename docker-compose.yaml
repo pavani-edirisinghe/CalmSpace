@@ -12,6 +12,7 @@ services:
 
   backend:
     build: ./backend
+    image: pavaniedirisinghe/calmspace-backend:latest
     container_name: backend_c
     restart: always
     depends_on:
@@ -27,6 +28,7 @@ services:
 
   frontend:
     build: ./frontend
+    image: pavaniedirisinghe/calmspace-frontend:latest 
     container_name: frontend_c
     ports:
       - "3000:3000"
