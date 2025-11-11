@@ -1,9 +1,3 @@
-const cors = require('cors');
-app.use(cors({
-  origin: 'http://98.81.69.11:3000',
-  credentials: true
-}));
-
 const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
