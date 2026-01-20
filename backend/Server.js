@@ -17,7 +17,6 @@ const db = mysql.createConnection({
   database: process.env.DB_NAME,
 });
 
-// Test database connection with retry logic
 const connectDB = () => {
   db.connect((err) => {
     if (err) {
