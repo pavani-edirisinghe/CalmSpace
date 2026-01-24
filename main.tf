@@ -50,7 +50,7 @@ data "aws_ami" "ubuntu" {
 # 3. Create EC2 Instance
 resource "aws_instance" "web_server" {
   ami           = data.aws_ami.ubuntu.id
-  instance_type = "t2.micro"
+  instance_type = "t3.micro"
   key_name      = "calmspace-new-key" 
   security_groups = [aws_security_group.calmspace_sg.name]
 
