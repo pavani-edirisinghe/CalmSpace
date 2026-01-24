@@ -2,61 +2,82 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_USER = credentials('dockerhub-username')
-        DOCKERHUB_PASS = credentials('dockerhub-password')
+        // Your Docker Hub Username
+        DOCKER_HUB_REPO = 'pavaniedirisinghe'
+        
+        // AWS Credentials (Make sure these IDs match what you created in Jenkins)
+        AWS_ACCESS_KEY_ID = credentials('aws-access-key-id')
+        AWS_SECRET_ACCESS_KEY = credentials('aws-secret-access-key')
+        AWS_DEFAULT_REGION = 'us-east-1'
     }
 
     stages {
-        stage('Checkout Code') {
+        stage('Checkout') {
             steps {
-                git branch: 'master',
-                    url: 'https://github.com/pavani-edirisinghe/CalmSpace.git'
+                // Get code from your GitHub
+                git branch: 'master', url: 'https://github.com/pavani-edirisinghe/CalmSpace.git'
             }
         }
 
         stage('Build & Push Docker Images') {
             steps {
-                sh '''
-                echo "$DOCKERHUB_PASS" | docker login -u $DOCKERHUB_USER --password-stdin
-                
-                cd backend
-                docker build -t pavaniedirisinghe/calmspace-backend:latest .
-                docker push pavaniedirisinghe/calmspace-backend:latest
-                
-                cd ../frontend
-                docker build -t pavaniedirisinghe/calmspace-frontend:latest .
-                docker push pavaniedirisinghe/calmspace-frontend:latest
-                '''
-            }
-        }
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', 'docker-hub-creds') {
+                        // Build Backend
+                        def backendImage = docker.build("${DOCKER_HUB_REPO}/calmspace-backend:latest", "./backend")
+                        backendImage.push()
 
-        stage('Deploy with Terraform') {
-            steps {
-                withAWS(credentials: 'aws-credentials', region: 'us-east-1') {
-                    sh '''
-                    cd /home/pavani/terraform-calmspace
-                    
-                    terraform init -upgrade
-                    terraform apply -auto-approve
-                    
-                    PUBLIC_IP=$(terraform output -raw public_ip)
-                    echo "PAVANI'S CALMSPACE IS NOW LIVE!"
-                    echo "LIVE URL: http://$PUBLIC_IP:3000"
-                    '''
+                        // Build Frontend
+                        def frontendImage = docker.build("${DOCKER_HUB_REPO}/calmspace-frontend:latest", "./frontend")
+                        frontendImage.push()
+                    }
                 }
             }
         }
-    }
 
-    post {
-        success {
-            echo "FULL CI/CD PIPELINE 100% AUTOMATED"
-            echo "Docker images pushed"
-            echo "AWS deployed successfully"
-            echo "Date: November 10, 2025"
+        // 👇 THIS IS THE PART YOU ARE ADDING/FIXING 👇
+        stage('Deploy with Terraform') {
+            steps {
+                dir('.') { // Runs in the root folder (where main.tf is)
+                    
+                    // Initialize Terraform
+                    sh 'terraform init'
+                    
+                    // Apply changes (Create/Update server)
+                    sh 'terraform apply -auto-approve'
+                    
+                    // Save the URL for the next stage
+                    sh 'terraform output -raw website_url > server_url.txt'
+                }
+            }
         }
-        failure {
-            echo "Something tiny went wrong — just click Build Now again"
+        // 👆 END OF FIX 👆
+
+        stage('Deploy/Update Server') {
+            steps {
+                sshagent(['ec2-ssh-key']) {
+                    script {
+                        // Read the server URL from the file created in the previous step
+                        def server_url = sh(script: "cat server_url.txt", returnStdout: true).trim()
+                        
+                        // Clean up the URL to get just the IP (removes http:// and :3000)
+                        def server_ip = server_url.replace("http://", "").replace(":3000", "")
+                        
+                        echo "Deploying to ${server_ip}..."
+
+                        // SSH into the server and force an update
+                        // We use StrictHostKeyChecking=no to avoid the "yes/no" prompt
+                        sh """
+                            ssh -o StrictHostKeyChecking=no ubuntu@${server_ip} '
+                                cd /home/ubuntu/calmspace
+                                sudo docker compose down
+                                sudo docker compose pull
+                                sudo docker compose up -d
+                            '
+                        """
+                    }
+                }
+            }
         }
     }
 }
