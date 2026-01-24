@@ -69,6 +69,10 @@ const CounsellorDetail = () => {
       navigate("/login");
       return;
     }
+    if (String(user.id) === String(id)) {
+      alert("You cannot book an appointment with yourself!");
+      return;
+    }
     setSelectedSlot({ day, slot });
   };
 
