@@ -31,6 +31,8 @@ const connectDB = () => {
 
 connectDB();
 
+
+
 app.post("/api/signup", (req, res) => {
   const { name, email, password, role } = req.body;
 
@@ -193,6 +195,49 @@ app.get("/api/counsellor/all", (req, res) => {
     }
     res.json(results);
   });
+});
+
+// --- Appointment Booking Endpoints ---
+
+// 1. Get all booked appointments for a specific counsellor
+app.get("/api/appointments/:counsellorId", (req, res) => {
+  const { counsellorId } = req.params;
+  const query = "SELECT appointment_date, time_slot FROM appointments WHERE counsellor_id = ?";
+  
+  db.query(query, [counsellorId], (err, results) => {
+    if (err) return res.status(500).json({ message: "Error fetching appointments" });
+    res.json(results);
+  });
+});
+
+// 2. Create a new appointment
+app.post("/api/appointments", (req, res) => {
+  const { user_id, counsellor_id, appointment_date, time_slot } = req.body;
+
+  if (!user_id || !counsellor_id || !appointment_date || !time_slot) {
+    return res.status(400).json({ message: "Missing booking details" });
+  }
+
+  // Check if slot is already taken
+  const checkQuery = "SELECT * FROM appointments WHERE counsellor_id = ? AND appointment_date = ? AND time_slot = ?";
+  db.query(checkQuery, [counsellor_id, appointment_date, time_slot], (err, results) => {
+    if (err) return res.status(500).json({ message: "Database error" });
+    
+    if (results.length > 0) {
+      return res.status(409).json({ message: "This slot is already booked!" });
+    }
+
+    // Save appointment
+    const insertQuery = "INSERT INTO appointments (user_id, counsellor_id, appointment_date, time_slot) VALUES (?, ?, ?, ?)";
+    db.query(insertQuery, [user_id, counsellor_id, appointment_date, time_slot], (err) => {
+      if (err){
+       console.error("SQL ERROR:", err.sqlMessage || err);
+       return res.status(500).json({ message: "Error booking appointment" });
+      }
+      res.status(201).json({ message: "Appointment booked successfully!" });
+    });
+  });
+
 });
 
 

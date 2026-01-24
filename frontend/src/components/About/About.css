@@ -16,10 +16,15 @@
   justify-content: center;
 }
 
+/* Update this class in About.css */
 .about-img {
   width: 100%;
   max-width: 600px;
-  border-radius: 15px;
+  border-radius: 54% 46% 70% 30% / 45% 60% 40% 55%;
+  object-fit: cover;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1;
 }
 
 /* Right Content */
@@ -96,5 +101,85 @@
 
   .about-image {
     margin-bottom: 2rem;
+  }
+}
+.about-image {
+  position: relative; 
+}
+
+.pulsating-play-btn {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 94px;
+  height: 94px;
+  
+  background: #0b57d0; 
+  
+  border-radius: 50%;
+  display: block;
+  overflow: hidden;
+  z-index: 2;
+  transition: all 0.3s ease;
+}
+
+/* 2. The Pulsating Ring Animation */
+.pulsating-play-btn::before {
+  content: "";
+  position: absolute;
+  width: 120%;  /* Percentage is safer than fixed px here */
+  height: 120%;
+  top: -10%;
+  left: -10%;
+  
+  border-radius: 50%;
+  border: 5px solid rgba(11, 87, 208, 0.7);
+  opacity: 1;
+  animation: pulsate-btn 2s infinite ease-out;
+}
+
+/* 3. The Triangle Icon (Play Symbol) */
+.pulsating-play-btn::after {
+  content: "";
+  position: absolute;
+  left: 55%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  
+  width: 0;
+  height: 0;
+  
+  /* Triangle Logic */
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 18px solid white; /* White Play Icon */
+  z-index: 100;
+  transition: all 0.3s ease;
+}
+
+/* --- Hover Effects --- */
+.pulsating-play-btn:hover {
+  background: #0842a0; /* Darker blue on hover */
+  transform: translate(-50%, -50%) scale(1.1); /* Grow slightly */
+}
+
+.pulsating-play-btn:hover::after {
+  transform: translate(-50%, -50%) scale(1.2); 
+}
+
+.pulsating-play-btn:hover::before {
+  animation: none;
+  border-color: rgba(11, 87, 208, 1);
+}
+
+@keyframes pulsate-btn {
+  0% {
+    transform: scale(0.6);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.3);
+    opacity: 0; /* Fades out as it expands */
   }
 }

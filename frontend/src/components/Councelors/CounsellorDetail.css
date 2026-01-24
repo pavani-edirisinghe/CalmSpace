@@ -1,7 +1,7 @@
 .counsellor-detail-page {
   background: #f9fafb;
   min-height: 100vh;
-  padding: 60px 20px;
+  padding: 10px 20px;
   font-family: "Poppins", sans-serif;
 }
 
@@ -110,3 +110,57 @@
   margin-top: 20px;
 }
 
+/* Available Slot (Green-ish) */
+.time-slot-btn.available {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+  cursor: pointer;
+}
+
+.time-slot-btn.available:hover {
+  background-color: #c8e6c9;
+}
+
+/* Booked Slot (Red/Gray and Disabled) */
+.time-slot-btn.booked {
+  background-color: #ffebee;
+  color: #c62828;
+  border: 1px solid #ffcdd2;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Selected Slot (Highlight Blue) */
+.time-slot-btn.selected {
+  background-color: #2196f3;
+  color: white;
+  border-color: #1976d2;
+  font-weight: bold;
+  transform: scale(1.05);
+}
+
+/* Confirm Booking Section */
+.booking-confirmation {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f0f8ff;
+  border-top: 2px solid #2196f3;
+  text-align: center;
+  border-radius: 0 0 10px 10px;
+}
+
+.confirm-btn {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.confirm-btn:hover {
+  background-color: #218838;
+}

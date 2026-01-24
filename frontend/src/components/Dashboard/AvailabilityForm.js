@@ -21,8 +21,9 @@ const AvailabilityForm = () => {
     }))
   );
 
+  const [bookedDays, setBookedDays] = useState([]); // Store days that have bookings
   const [loading, setLoading] = useState(false);
-  const [viewMode, setViewMode] = useState(true); 
+  const [viewMode, setViewMode] = useState(true);
   const [profileFetched, setProfileFetched] = useState(false);
 
   const storedUser = localStorage.getItem("user");
@@ -30,46 +31,90 @@ const AvailabilityForm = () => {
   const counsellorId = user?.id;
 
   useEffect(() => {
-    const fetchAvailability = async () => {
+    const fetchData = async () => {
       if (!counsellorId) return;
 
       try {
-        const res = await fetch(
+        // 1. Fetch Availability
+        const availRes = await fetch(
           `http://localhost:5000/api/counsellor/availability/${counsellorId}`
         );
-        const data = await res.json();
+        const availData = await availRes.json();
 
-        if (data && data.length > 0) {
-          
+        // 2. Fetch Active Bookings
+        const bookingRes = await fetch(
+          `http://localhost:5000/api/appointments/${counsellorId}`
+        );
+        const bookingData = await bookingRes.json();
+
+        // Extract unique days that have bookings
+        // Assuming 'appointment_date' stores the Day Name (e.g., "Monday")
+        const activeBookings = bookingData.map((b) => b.appointment_date);
+        setBookedDays(activeBookings);
+
+        if (availData && availData.length > 0) {
           const updated = daysOfWeek.map((day) => {
-  const dayData = data.find((d) => d.day_of_week === day);
-  return {
-    day,
-    available: !!dayData,
-    startTime: dayData?.timeSlots?.[0]?.start_time || "", 
-    endTime: dayData?.timeSlots?.[0]?.end_time || "",
-  };
-});
-
+            const dayData = availData.find((d) => d.day_of_week === day);
+            return {
+              day,
+              available: !!dayData,
+              startTime: dayData?.timeSlots?.[0]?.start_time || "",
+              endTime: dayData?.timeSlots?.[0]?.end_time || "",
+            };
+          });
           setAvailability(updated);
         }
       } catch (err) {
-        console.error("Error fetching availability:", err);
+        console.error("Error fetching data:", err);
       } finally {
         setProfileFetched(true);
       }
     };
 
-    fetchAvailability();
+    fetchData();
   }, [counsellorId]);
 
+  // Helper to check if a day has active bookings
+  const isDayBooked = (dayName) => {
+    return bookedDays.includes(dayName);
+  };
+
   const handleCheckboxChange = (index) => {
+    const dayName = availability[index].day;
+    const currentlyAvailable = availability[index].available;
+
+    // PROTECTION: Prevent removing availability if there is a booking
+    if (currentlyAvailable && isDayBooked(dayName)) {
+      alert(
+        `You cannot remove ${dayName} because you have pending appointments on this day.`
+      );
+      return; // Stop the change
+    }
+
     const updated = [...availability];
     updated[index].available = !updated[index].available;
+
+    // Optional: Clear times if unchecked
+    if (!updated[index].available) {
+      updated[index].startTime = "";
+      updated[index].endTime = "";
+    }
+
     setAvailability(updated);
   };
 
   const handleTimeChange = (index, field, value) => {
+    const dayName = availability[index].day;
+
+    // PROTECTION: Prevent changing time if there is a booking
+    // (Changing time might invalidate an existing booking's slot)
+    if (isDayBooked(dayName)) {
+      alert(
+        `You cannot modify the time for ${dayName} because you have active bookings. Booked users expect the original time slot.`
+      );
+      return; // Stop the change
+    }
+
     const updated = [...availability];
     updated[index][field] = value;
     setAvailability(updated);
@@ -78,17 +123,26 @@ const AvailabilityForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!counsellorId) {
+      alert("User not logged in!");
+      return;
+    }
+
+    const incompleteDay = availability.find(
+      (d) => d.available && (!d.startTime || !d.endTime)
+    );
+
+    if (incompleteDay) {
+      alert(`Please select both Start Time and End Time for ${incompleteDay.day}`);
+      return;
+    }
+
     const selectedDays = availability
       .filter((d) => d.available)
       .map((d) => ({
         day: d.day,
         timeSlots: [{ startTime: d.startTime, endTime: d.endTime }],
       }));
-
-    if (!counsellorId) {
-      alert("User not logged in!");
-      return;
-    }
 
     try {
       setLoading(true);
@@ -103,7 +157,7 @@ const AvailabilityForm = () => {
       const data = await res.json();
       if (res.ok) {
         alert("Availability saved successfully!");
-        setViewMode(true); 
+        setViewMode(true);
       } else {
         alert(data.message);
       }
@@ -135,7 +189,7 @@ const AvailabilityForm = () => {
             <tbody>
               {availableDays.map((d) => (
                 <tr key={d.day}>
-                  <td>{d.day}</td>
+                  <td>{d.day} {isDayBooked(d.day) && <span style={{color:'red', fontSize:'0.8em'}}>(Booked)</span>}</td>
                   <td>{d.startTime}</td>
                   <td>{d.endTime}</td>
                 </tr>
@@ -145,7 +199,13 @@ const AvailabilityForm = () => {
         ) : (
           <p>No availability set yet.</p>
         )}
-        <button onClick={() => setViewMode(false)}>Edit Availability</button>
+        <button
+          onClick={() => setViewMode(false)}
+          className="save-btn"
+          style={{ marginTop: "20px" }}
+        >
+          Edit Availability
+        </button>
       </div>
     );
   }
@@ -162,34 +222,45 @@ const AvailabilityForm = () => {
             <span>End Time</span>
           </div>
 
-          {availability.map((dayObj, index) => (
-            <div key={dayObj.day} className="table-row">
-              <span>{dayObj.day}</span>
-              <input
-                type="checkbox"
-                checked={dayObj.available}
-                onChange={() => handleCheckboxChange(index)}
-              />
+          {availability.map((dayObj, index) => {
+            const hasBooking = isDayBooked(dayObj.day);
+            
+            return (
+              <div key={dayObj.day} className="table-row">
+                <span>
+                  {dayObj.day} 
+                  {hasBooking && <span style={{color: 'red', fontSize: '10px', display:'block'}}> (Has Bookings)</span>}
+                </span>
+                <input
+                  type="checkbox"
+                  checked={dayObj.available}
+                  onChange={() => handleCheckboxChange(index)}
+                  // You can also simply disable it here if you prefer not to use an alert
+                  // disabled={hasBooking} 
+                />
 
-              <input
-                type="time"
-                value={dayObj.startTime}
-                onChange={(e) =>
-                  handleTimeChange(index, "startTime", e.target.value)
-                }
-                disabled={!dayObj.available}
-              />
+                <input
+                  type="time"
+                  value={dayObj.startTime}
+                  onChange={(e) =>
+                    handleTimeChange(index, "startTime", e.target.value)
+                  }
+                  disabled={!dayObj.available} // Also arguably disabled={hasBooking}
+                  required={dayObj.available}
+                />
 
-              <input
-                type="time"
-                value={dayObj.endTime}
-                onChange={(e) =>
-                  handleTimeChange(index, "endTime", e.target.value)
-                }
-                disabled={!dayObj.available}
-              />
-            </div>
-          ))}
+                <input
+                  type="time"
+                  value={dayObj.endTime}
+                  onChange={(e) =>
+                    handleTimeChange(index, "endTime", e.target.value)
+                  }
+                  disabled={!dayObj.available}
+                  required={dayObj.available}
+                />
+              </div>
+            );
+          })}
         </div>
 
         <button type="submit" className="save-btn" disabled={loading}>
