@@ -70,6 +70,7 @@ resource "aws_instance" "web_server" {
       mysql:
         image: mysql:8.4
         container_name: mysql_c
+        restart: always
         environment:
           MYSQL_ROOT_PASSWORD: root123
           MYSQL_DATABASE: calmspace_db
@@ -97,6 +98,7 @@ resource "aws_instance" "web_server" {
       frontend:
         image: pavaniedirisinghe/calmspace-frontend:latest
         container_name: frontend_c
+        restart: always
         ports:
           - "3000:3000"
         depends_on:
