@@ -8,10 +8,12 @@ const Counselors = () => {
   const [counsellors, setCounsellors] = useState([]);
   const navigate = useNavigate();
 
+  const baseUrl = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
   useEffect(() => {
     const fetchCounsellors = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/counsellor/all");
+        const res = await fetch(`${baseUrl}/api/counsellor/all`);
         const data = await res.json();
         setCounsellors(data);
       } catch (error) {
@@ -19,7 +21,7 @@ const Counselors = () => {
       }
     };
     fetchCounsellors();
-  }, []);
+  }, [baseUrl]); 
 
   const handleViewProfile = (id) => {
     navigate(`/counsellor/${id}`);

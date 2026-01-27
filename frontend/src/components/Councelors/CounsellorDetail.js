@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom"; // Import useNavigate
+import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../Navbar/Navbar";
 import { FaUserCircle } from "react-icons/fa";
 import "./CounsellorDetail.css";
@@ -9,28 +9,26 @@ const CounsellorDetail = () => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [availability, setAvailability] = useState([]);
-  const [bookedSlots, setBookedSlots] = useState([]); // Store booked slots
+  const [bookedSlots, setBookedSlots] = useState([]); 
   const [selectedSlot, setSelectedSlot] = useState(null);
   
-  // Get current logged-in user
   const userString = localStorage.getItem("user");
   const user = userString ? JSON.parse(userString) : null;
+
+  const baseUrl = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // 1. Fetch Profile
-        const profileRes = await fetch(`http://localhost:5000/api/counsellor/profile/${id}`);
+        const profileRes = await fetch(`${baseUrl}/api/counsellor/profile/${id}`);
         const profileData = await profileRes.json();
         setProfile(profileData);
 
-        // 2. Fetch Availability (The counsellor's schedule)
-        const availRes = await fetch(`http://localhost:5000/api/counsellor/availability/${id}`);
+        const availRes = await fetch(`${baseUrl}/api/counsellor/availability/${id}`);
         const availData = await availRes.json();
         setAvailability(availData);
 
-        // 3. Fetch Booked Appointments (What is already taken)
-        const bookedRes = await fetch(`http://localhost:5000/api/appointments/${id}`);
+        const bookedRes = await fetch(`${baseUrl}/api/appointments/${id}`);
         const bookedData = await bookedRes.json();
         setBookedSlots(bookedData);
 
@@ -39,9 +37,8 @@ const CounsellorDetail = () => {
       }
     };
     fetchData();
-  }, [id]);
+  }, [id, baseUrl]); 
 
-  // Helper to generate 30-min slots
   const generateTimeSlots = (startTime, endTime) => {
     const slots = [];
     let current = new Date(`2025-01-01T${startTime}`);
@@ -56,7 +53,6 @@ const CounsellorDetail = () => {
     return slots;
   };
 
-  // Helper to check if a specific slot on a specific day is booked
   const isSlotBooked = (day, timeSlot) => {
     return bookedSlots.some(
       (booking) => booking.appointment_date === day && booking.time_slot === timeSlot
@@ -80,13 +76,13 @@ const CounsellorDetail = () => {
     if (!selectedSlot) return;
 
     try {
-      const res = await fetch("http://localhost:5000/api/appointments", {
+      const res = await fetch(`${baseUrl}/api/appointments`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           user_id: user.id,
           counsellor_id: id,
-          appointment_date: selectedSlot.day, // Currently using "Monday", "Tuesday", etc.
+          appointment_date: selectedSlot.day,
           time_slot: selectedSlot.slot,
         }),
       });
@@ -94,8 +90,8 @@ const CounsellorDetail = () => {
       const data = await res.json();
       if (res.ok) {
         alert("Appointment Booked Successfully!");
-        // Refresh booked slots to update UI immediately
-        const bookedRes = await fetch(`http://localhost:5000/api/appointments/${id}`);
+        
+        const bookedRes = await fetch(`${baseUrl}/api/appointments/${id}`);
         const bookedData = await bookedRes.json();
         setBookedSlots(bookedData);
         setSelectedSlot(null);
@@ -114,7 +110,7 @@ const CounsellorDetail = () => {
       <div className="counsellor-detail-page">
         {profile ? (
           <div className="counsellor-detail-card">
-            {/* Profile Header */}
+            
             <div className="profile-section">
               <div className="profile-icon">
                 <FaUserCircle className="icon" />
@@ -126,7 +122,6 @@ const CounsellorDetail = () => {
               </div>
             </div>
 
-            {/* Booking Section */}
             <div className="availability-section">
               <h3>Select a Time Slot</h3>
               
@@ -144,7 +139,7 @@ const CounsellorDetail = () => {
                             return (
                               <button
                                 key={slot + i}
-                                disabled={booked} // Disable if booked
+                                disabled={booked} 
                                 className={`time-slot-btn ${booked ? "booked" : "available"} ${isSelected ? "selected" : ""}`}
                                 onClick={() => !booked && handleSlotClick(day.day_of_week, slot)}
                                 title={booked ? "Already Booked" : "Click to Select"}
@@ -162,7 +157,6 @@ const CounsellorDetail = () => {
               )}
             </div>
 
-            {/* Confirm Booking Button */}
             {selectedSlot && (
               <div className="booking-confirmation">
                 <p>

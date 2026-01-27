@@ -21,7 +21,7 @@ const AvailabilityForm = () => {
     }))
   );
 
-  const [bookedDays, setBookedDays] = useState([]); // Store days that have bookings
+  const [bookedDays, setBookedDays] = useState([]); 
   const [loading, setLoading] = useState(false);
   const [viewMode, setViewMode] = useState(true);
   const [profileFetched, setProfileFetched] = useState(false);
@@ -30,25 +30,23 @@ const AvailabilityForm = () => {
   const user = storedUser ? JSON.parse(storedUser) : null;
   const counsellorId = user?.id;
 
+  const baseUrl = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
   useEffect(() => {
     const fetchData = async () => {
       if (!counsellorId) return;
 
       try {
-        // 1. Fetch Availability
         const availRes = await fetch(
-          `http://localhost:5000/api/counsellor/availability/${counsellorId}`
+          `${baseUrl}/api/counsellor/availability/${counsellorId}`
         );
         const availData = await availRes.json();
 
-        // 2. Fetch Active Bookings
         const bookingRes = await fetch(
-          `http://localhost:5000/api/appointments/${counsellorId}`
+          `${baseUrl}/api/appointments/${counsellorId}`
         );
         const bookingData = await bookingRes.json();
 
-        // Extract unique days that have bookings
-        // Assuming 'appointment_date' stores the Day Name (e.g., "Monday")
         const activeBookings = bookingData.map((b) => b.appointment_date);
         setBookedDays(activeBookings);
 
@@ -72,9 +70,8 @@ const AvailabilityForm = () => {
     };
 
     fetchData();
-  }, [counsellorId]);
+  }, [counsellorId, baseUrl]);
 
-  // Helper to check if a day has active bookings
   const isDayBooked = (dayName) => {
     return bookedDays.includes(dayName);
   };
@@ -83,18 +80,16 @@ const AvailabilityForm = () => {
     const dayName = availability[index].day;
     const currentlyAvailable = availability[index].available;
 
-    // PROTECTION: Prevent removing availability if there is a booking
     if (currentlyAvailable && isDayBooked(dayName)) {
       alert(
         `You cannot remove ${dayName} because you have pending appointments on this day.`
       );
-      return; // Stop the change
+      return; 
     }
 
     const updated = [...availability];
     updated[index].available = !updated[index].available;
 
-    // Optional: Clear times if unchecked
     if (!updated[index].available) {
       updated[index].startTime = "";
       updated[index].endTime = "";
@@ -106,13 +101,11 @@ const AvailabilityForm = () => {
   const handleTimeChange = (index, field, value) => {
     const dayName = availability[index].day;
 
-    // PROTECTION: Prevent changing time if there is a booking
-    // (Changing time might invalidate an existing booking's slot)
     if (isDayBooked(dayName)) {
       alert(
         `You cannot modify the time for ${dayName} because you have active bookings. Booked users expect the original time slot.`
       );
-      return; // Stop the change
+      return; 
     }
 
     const updated = [...availability];
@@ -146,8 +139,9 @@ const AvailabilityForm = () => {
 
     try {
       setLoading(true);
+      
       const res = await fetch(
-        "http://localhost:5000/api/counsellor/availability",
+        `${baseUrl}/api/counsellor/availability`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -235,8 +229,6 @@ const AvailabilityForm = () => {
                   type="checkbox"
                   checked={dayObj.available}
                   onChange={() => handleCheckboxChange(index)}
-                  // You can also simply disable it here if you prefer not to use an alert
-                  // disabled={hasBooking} 
                 />
 
                 <input
@@ -245,7 +237,7 @@ const AvailabilityForm = () => {
                   onChange={(e) =>
                     handleTimeChange(index, "startTime", e.target.value)
                   }
-                  disabled={!dayObj.available} // Also arguably disabled={hasBooking}
+                  disabled={!dayObj.available} 
                   required={dayObj.available}
                 />
 

@@ -10,7 +10,7 @@ const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    role: "user", 
+    role: "user",
   });
 
   const handleChange = (e) => {
@@ -19,30 +19,33 @@ const Login = () => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    const res = await fetch("http://localhost:5000/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    });
+    e.preventDefault();
+    try {
+      const baseUrl = process.env.REACT_APP_API_URL || "http://localhost:5000";
+      
+      console.log("Login using API URL:", baseUrl); 
 
-    const data = await res.json();
-    if (res.ok) {
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      alert("Login successful");
-      if (formData.role === "user") navigate("/");
-      else if (formData.role === "counsellor") navigate("/counsellor-dashboard");
-    } else {
-      alert(data.message);
+      const res = await fetch(`${baseUrl}/api/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        alert("Login successful");
+        if (formData.role === "user") navigate("/");
+        else if (formData.role === "counsellor") navigate("/counsellor-dashboard");
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Server error");
     }
-  } catch (error) {
-    console.error(error);
-    alert("Server error");
-  }
-};
-
+  };
 
   return (
     <div>

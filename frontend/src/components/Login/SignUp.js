@@ -20,29 +20,31 @@ const SignUp = () => {
     setFormData({ ...formData, [name]: value });
   };
 
- 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    const res = await fetch("http://localhost:5000/api/signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    });
+    e.preventDefault();
+    try {
+      const baseUrl = process.env.REACT_APP_API_URL || "http://localhost:5000";
+      
+      console.log("Using API URL:", baseUrl); 
 
-    const data = await res.json();
-    if (res.ok) {
-      alert("Signup successful! Please login.");
-      navigate("/login");
-    } else {
-      alert(data.message);
+      const res = await fetch(`${baseUrl}/api/signup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        alert("Signup successful! Please login.");
+        navigate("/login");
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Server error");
     }
-  } catch (error) {
-    console.error(error);
-    alert("Server error");
-  }
-};
-
+  };
 
   return (
     <div>

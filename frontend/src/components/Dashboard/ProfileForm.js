@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-// We don't need the external CSS anymore, styles are defined below
-// import "./ProfileForm.css"; 
 
 const ProfileForm = () => {
   const [profile, setProfile] = useState({
@@ -13,21 +11,26 @@ const ProfileForm = () => {
   const [profileFetched, setProfileFetched] = useState(false);
   const [viewMode, setViewMode] = useState(true);
 
-  // --- STATE FOR HOVER EFFECTS (Since inline styles can't do :hover) ---
   const [hoverSave, setHoverSave] = useState(false);
   const [hoverCancel, setHoverCancel] = useState(false);
   const [hoverEdit, setHoverEdit] = useState(false);
 
   const user = JSON.parse(localStorage.getItem("user"));
+  // --- FIX 1: Extract userId here so we don't need 'user' inside useEffect ---
+  const userId = user?.id;
   const token = localStorage.getItem("token");
+
+  const baseUrl = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
   useEffect(() => {
     const fetchProfile = async () => {
-      if (!user) return;
+      // --- FIX 2: Check userId instead of user ---
+      if (!userId) return;
       try {
         const res = await axios.get(
-          `http://localhost:5000/api/counsellor/profile/${user.id}`
+          `${baseUrl}/api/counsellor/profile/${userId}` // Use userId variable
         );
+        
         if (res.data && res.data.name) {
           setProfile({
             name: res.data.name,
@@ -42,7 +45,9 @@ const ProfileForm = () => {
       }
     };
     fetchProfile();
-  }, [user]);
+    
+    // --- FIX 3: Dependency is now just userId. No more warning! ---
+  }, [userId, baseUrl]); 
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -55,8 +60,9 @@ const ProfileForm = () => {
 
     try {
       setLoading(true);
+      
       const res = await axios.post(
-        "http://localhost:5000/api/counsellor/profile",
+        `${baseUrl}/api/counsellor/profile`,
         {
           user_id: user.id,
           name: profile.name,
@@ -78,7 +84,6 @@ const ProfileForm = () => {
     }
   };
 
-  // --- INLINE STYLES OBJECT ---
   const styles = {
     container: {
       maxWidth: "600px",
@@ -108,7 +113,7 @@ const ProfileForm = () => {
       border: "1px solid #ddd",
       borderRadius: "8px",
       fontSize: "15px",
-      boxSizing: "border-box", // Critical for alignment
+      boxSizing: "border-box", 
     },
     textarea: {
       width: "100%",
@@ -121,7 +126,6 @@ const ProfileForm = () => {
       minHeight: "100px",
       resize: "vertical",
     },
-    // Flexbox Container for Buttons
     btnGroup: {
       display: "flex",
       gap: "15px",
@@ -129,11 +133,10 @@ const ProfileForm = () => {
       width: "100%",
       alignItems: "center",
     },
-    // Primary Button (Save/Edit/Create)
     primaryBtn: {
       flex: 1,
       height: "48px",
-      border: "1px solid transparent", // Matches Cancel border width
+      border: "1px solid transparent", 
       borderRadius: "8px",
       fontSize: "16px",
       fontWeight: "600",
@@ -147,11 +150,10 @@ const ProfileForm = () => {
       color: "white",
       boxShadow: "0 2px 6px rgba(25, 118, 210, 0.3)",
     },
-    // Secondary Button (Cancel)
     cancelBtn: {
       flex: 1,
       height: "48px",
-      border: "1px solid #ddd", // Visible border
+      border: "1px solid #ddd", 
       borderRadius: "8px",
       fontSize: "16px",
       fontWeight: "600",
@@ -179,7 +181,6 @@ const ProfileForm = () => {
     return <p style={{ textAlign: "center", marginTop: "50px" }}>Loading profile...</p>;
   }
 
-  // --- VIEW MODE (Display Profile) ---
   if (viewMode) {
     return (
       <div style={styles.container}>
@@ -220,7 +221,6 @@ const ProfileForm = () => {
     );
   }
 
-  // --- EDIT MODE (Form) ---
   return (
     <div style={styles.container}>
       <h2 style={styles.heading}>{profile.name ? "Edit Profile" : "Create Profile"}</h2>
@@ -260,7 +260,6 @@ const ProfileForm = () => {
           />
         </label>
 
-        {/* BUTTON GROUP (Perfectly Aligned) */}
         <div style={styles.btnGroup}>
           <button
             type="submit"
