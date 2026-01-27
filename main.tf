@@ -90,10 +90,16 @@ resource "aws_instance" "web_server" {
                   image: pavaniedirisinghe/calmspace-backend:latest
                   container_name: backend_c
                   restart: always                  # <--- KEEPS IT ALIVE
-                  ports:
-                    - "5000:5000"
                   depends_on:
                     - mysql
+                  environment:                 
+                    DB_HOST: mysql             
+                    DB_USER: root
+                    DB_PASSWORD: root123
+                    DB_NAME: calmspace_db
+                  ports:
+                    - "5000:5000"
+                  command: sh -c "sleep 10 && node Server.js"
 
                 frontend:
                   image: pavaniedirisinghe/calmspace-frontend:latest
