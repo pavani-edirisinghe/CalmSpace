@@ -196,3 +196,28 @@
   font-size: 0.95rem;
 }
 
+@media (max-width: 768px) {
+  .row {
+    flex-direction: column; 
+    text-align: center;
+  }
+
+  .text-content {
+    top: 0; 
+    margin-top: 0;
+    padding-top: 20px;
+    
+    position: relative;
+    z-index: 10; 
+  }
+  
+  .image-content {
+    margin-top: 30px; 
+  }
+
+  .hero-image-wrapper {
+    width: 280px;
+    height: 280px;
+    z-index: 1; 
+  }
+}

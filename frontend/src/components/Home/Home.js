@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom"; // 1. Import the hook
 import Navbar from "../Navbar/Navbar"; 
 import About from "../About/About";  
 import Counsellors from "../About/Team";
@@ -8,6 +9,8 @@ import Footer from "../Footer/Footer";
 import "./Home.css";
 
 const Home = () => {
+  const navigate = useNavigate(); // 2. Initialize the hook
+
   return (
     <div className="home">
       <Navbar />
@@ -29,9 +32,14 @@ const Home = () => {
               <p>
                 Book your counselling sessions anytime, anywhere. Our licensed therapists are here to listen and guide you toward a happier, balanced life.
               </p>
-              <a href="#appointment" className="btn-primary">
+              
+              {/* 3. Updated Button: Navigates to the "/counselors" page */}
+              <button 
+                className="btn-primary" 
+                onClick={() => navigate("/counselors")}
+              >
                 Book a Session
-              </a>
+              </button>
 
             </div>
 
@@ -48,80 +56,80 @@ const Home = () => {
         </div>
       </section>
 
-<section className="departments-section" id="departments">
-  <div className="container">
-    <h2 className="section-title">Our Departments</h2>
-    <p className="section-subtitle">
-      Explore our specialized counselling departments designed to support your mental and emotional well-being.
-    </p>
+      <section className="departments-section" id="departments">
+        <div className="container">
+          <h2 className="section-title">Our Departments</h2>
+          <p className="section-subtitle">
+            Explore our specialized counselling departments designed to support your mental and emotional well-being.
+          </p>
 
-    <div className="departments-grid">
-      <div className="department-card">
-        <img src="/assets/img/mental-health.jpeg" alt="Mental Health" />
-        <h3>Mental Health</h3>
-        <p>
-          Personalized therapy sessions to help you manage anxiety, depression, and emotional stress.
-        </p>
-      </div>
+          <div className="departments-grid">
+            <div className="department-card">
+              <img src="/assets/img/mental-health.jpeg" alt="Mental Health" />
+              <h3>Mental Health</h3>
+              <p>
+                Personalized therapy sessions to help you manage anxiety, depression, and emotional stress.
+              </p>
+            </div>
 
-      <div className="department-card">
-        <img src="/assets/img/career-guidance.jpeg" alt="Career Guidance" />
-        <h3>Career Guidance</h3>
-        <p>
-          Discover your strengths and explore career paths with our expert counsellors.
-        </p>
-      </div>
+            <div className="department-card">
+              <img src="/assets/img/career-guidance.jpeg" alt="Career Guidance" />
+              <h3>Career Guidance</h3>
+              <p>
+                Discover your strengths and explore career paths with our expert counsellors.
+              </p>
+            </div>
 
-      <div className="department-card">
-        <img src="/assets/img/relashionship.jpeg" alt="Relationship Counselling" />
-        <h3>Relationship Counselling</h3>
-        <p>
-          Strengthen communication and rebuild trust in your relationships.
-        </p>
-      </div>
+            <div className="department-card">
+              <img src="/assets/img/relashionship.jpeg" alt="Relationship Counselling" />
+              <h3>Relationship Counselling</h3>
+              <p>
+                Strengthen communication and rebuild trust in your relationships.
+              </p>
+            </div>
 
-      <div className="department-card">
-        <img src="/assets/img/stress.jpeg" alt="Stress Management" />
-        <h3>Stress Management</h3>
-        <p>
-          Learn practical strategies to handle stress and lead a balanced life.
-        </p>
-      </div>
+            <div className="department-card">
+              <img src="/assets/img/stress.jpeg" alt="Stress Management" />
+              <h3>Stress Management</h3>
+              <p>
+                Learn practical strategies to handle stress and lead a balanced life.
+              </p>
+            </div>
 
-      <div className="department-card">
-        <img src="/assets/img/family.jpeg" alt="Family Counselling" />
-        <h3>Family Counselling</h3>
-        <p>
-          Improve family communication, resolve conflicts, and build stronger relationships at home.
-        </p>
-      </div>
+            <div className="department-card">
+              <img src="/assets/img/family.jpeg" alt="Family Counselling" />
+              <h3>Family Counselling</h3>
+              <p>
+                Improve family communication, resolve conflicts, and build stronger relationships at home.
+              </p>
+            </div>
 
-      <div className="department-card">
-        <img src="/assets/img/child.jpeg" alt="Child & Adolescent Counselling" />
-        <h3>Child & Adolescent Counselling</h3>
-        <p>
-          Gentle, age-appropriate support for children and teens facing emotional or behavioral challenges.
-        </p>
-      </div>
+            <div className="department-card">
+              <img src="/assets/img/child.jpeg" alt="Child & Adolescent Counselling" />
+              <h3>Child & Adolescent Counselling</h3>
+              <p>
+                Gentle, age-appropriate support for children and teens facing emotional or behavioral challenges.
+              </p>
+            </div>
 
-      <div className="department-card">
-        <img src="/assets/img/academic.jpeg" alt="Academic Counselling" />
-        <h3>Academic Counselling</h3>
-        <p>
-          Guidance for students to overcome study stress, improve focus, and reach their academic goals.
-        </p>
-      </div>
+            <div className="department-card">
+              <img src="/assets/img/academic.jpeg" alt="Academic Counselling" />
+              <h3>Academic Counselling</h3>
+              <p>
+                Guidance for students to overcome study stress, improve focus, and reach their academic goals.
+              </p>
+            </div>
 
-      <div className="department-card">
-        <img src="/assets/img/wellness.jpeg" alt="Wellness & Lifestyle Coaching" />
-        <h3>Wellness & Lifestyle Coaching</h3>
-        <p>
-          Empower yourself through mindfulness, self-care, and healthy lifestyle practices for long-term balance.
-        </p>
-      </div>
-    </div>
-  </div>
-</section>
+            <div className="department-card">
+              <img src="/assets/img/wellness.jpeg" alt="Wellness & Lifestyle Coaching" />
+              <h3>Wellness & Lifestyle Coaching</h3>
+              <p>
+                Empower yourself through mindfulness, self-care, and healthy lifestyle practices for long-term balance.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <About />
       <Counsellors />

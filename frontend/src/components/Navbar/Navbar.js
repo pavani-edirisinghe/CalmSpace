@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 // 1. Change 'Link' to 'NavLink' in the import
 import { NavLink, useNavigate } from "react-router-dom";
 import logo from "../../logo.png";
@@ -7,12 +7,18 @@ import "./Navbar.css";
 const Navbar = () => {
   const navigate = useNavigate();
 
+  // --- HAMBURGER MENU LOGIC ---
+  const [click, setClick] = useState(false);
+  const handleClick = () => setClick(!click);
+  const closeMobileMenu = () => setClick(false);
+
   const userString = localStorage.getItem("user");
   const user = userString ? JSON.parse(userString) : null;
 
   const handleLogout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
+    closeMobileMenu(); // Close menu on logout
     alert("Logout successful");
     navigate("/login");
   };
@@ -40,81 +46,82 @@ const Navbar = () => {
         </div>
       </div>
 
-      <nav
-        className="navbar"
-        style={{
-          paddingLeft: "60px",
-          paddingRight: "60px",
-          paddingTop: "10px",
-          paddingBottom: "10px",
-        }}
-      >
-        <div className="logo">
-          <img src={logo} alt="CalmSpace Logo" className="navbar-logo" />
-          CalmSpace
-        </div>
-        
-        <ul className="nav-links">
-          {/* 2. Use NavLink instead of Link.
-             The 'end' prop ensures Home is only blue when exactly at "/" 
-          */}
-          <li>
-            <NavLink to="/" end className={({ isActive }) => (isActive ? "active" : "")}>
-              Home
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/about" className={({ isActive }) => (isActive ? "active" : "")}>
-              About Us
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/counselors" className={({ isActive }) => (isActive ? "active" : "")}>
-              Counselors
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/contact" className={({ isActive }) => (isActive ? "active" : "")}>
-              Contact
-            </NavLink>
-          </li>
+      {/* Removed inline styles here so CSS can control mobile view */}
+      <nav className="navbar">
+        <div className="navbar-container">
+            <div className="logo">
+                <img src={logo} alt="CalmSpace Logo" className="navbar-logo" />
+                CalmSpace
+            </div>
 
-          {user ? (
-            <>
-              {user.role === "counsellor" && (
+            {/* --- HAMBURGER ICON (Visible only on Mobile via CSS) --- */}
+            <div className="menu-icon" onClick={handleClick}>
+                <i className={click ? "fas fa-times" : "fas fa-bars"} />
+            </div>
+            
+            {/* Added 'active' class logic for sliding effect */}
+            <ul className={click ? "nav-links active" : "nav-links"}>
+            <li>
+                <NavLink to="/" end className={({ isActive }) => (isActive ? "active" : "")} onClick={closeMobileMenu}>
+                Home
+                </NavLink>
+            </li>
+            <li>
+                <NavLink to="/about" className={({ isActive }) => (isActive ? "active" : "")} onClick={closeMobileMenu}>
+                About Us
+                </NavLink>
+            </li>
+            <li>
+                <NavLink to="/counselors" className={({ isActive }) => (isActive ? "active" : "")} onClick={closeMobileMenu}>
+                Counselors
+                </NavLink>
+            </li>
+            <li>
+                <NavLink to="/contact" className={({ isActive }) => (isActive ? "active" : "")} onClick={closeMobileMenu}>
+                Contact
+                </NavLink>
+            </li>
+
+            {user ? (
+                <>
+                {user.role === "counsellor" && (
+                    <li>
+                    <NavLink 
+                        to="/counsellor-dashboard" 
+                        title="Counsellor Dashboard"
+                        className={({ isActive }) => (isActive ? "active" : "")}
+                        onClick={closeMobileMenu}
+                    >
+                        <i className="fa fa-user-circle" style={{ fontSize: "1.2rem", marginRight: "5px" }}></i>
+                        Profile
+                    </NavLink>
+                    </li>
+                )}
+
                 <li>
-                  <NavLink 
-                    to="/counsellor-dashboard" 
-                    title="Counsellor Dashboard"
-                    className={({ isActive }) => (isActive ? "active" : "")}
-                  >
-                    <i className="fa fa-user-circle" style={{ fontSize: "1.2rem", marginRight: "5px" }}></i>
-                    Profile
-                  </NavLink>
+                    <NavLink to="/login" onClick={handleLogout} style={{ cursor: "pointer" }}>
+                    Logout
+                    </NavLink>
                 </li>
-              )}
-
-              <li>
-                <NavLink to="/login" onClick={handleLogout} style={{ cursor: "pointer" }}>
-                  Logout
-                </NavLink>
-              </li>
-            </>
-          ) : (
-            <>
-              <li>
-                <NavLink to="/login" className={({ isActive }) => (isActive ? "active" : "")}>
-                  Login
-                </NavLink>
-              </li>
-              <li>
-                <NavLink to="/signup" className={({ isActive }) => (isActive ? "active" : "")}>
-                  Sign Up
-                </NavLink>
-              </li>
-            </>
-          )}
-        </ul>
+                </>
+            ) : (
+                <>
+                <li>
+                    <NavLink to="/login" className={({ isActive }) => (isActive ? "active" : "")} onClick={closeMobileMenu}>
+                    Login
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink to="/signup" className={({ isActive }) => (isActive ? "active" : "")} onClick={closeMobileMenu}>
+                    Sign Up
+                    </NavLink>
+                    
+                </li>
+                </>
+            )}
+            <br></br>
+            </ul>
+        </div>
       </nav>
     </>
   );
