@@ -55,88 +55,59 @@ resource "aws_instance" "web_server" {
   security_groups = [aws_security_group.calmspace_sg.name]
 
   user_data = <<-EOF
-    #!/bin/bash
-    apt-get update
-    apt-get install -y docker.io docker-compose-v2
-    systemctl start docker
-    systemctl enable docker
-    usermod -aG docker ubuntu
-    mkdir -p /home/ubuntu/calmspace
-    
-    # We create the docker-compose.yml dynamically on the server
-    cat <<EOT >> /home/ubuntu/calmspace/docker-compose.yml
-    version: '3.8'
-    services:
-      mysql:
-        image: mysql:8.4
-        container_name: mysql_c
-        restart: always
-        environment:
-          MYSQL_ROOT_PASSWORD: root123
-          MYSQL_DATABASE: calmspace_db
-        ports:
-          - "3307:3306"
-        volumes:
-          - db_data:/var/lib/mysql
-          - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-      
-      backend:
-        image: pavaniedirisinghe/calmspace-backend:latest
-        container_name: backend_c
-        restart: always
-        depends_on:
-          - mysql
-        environment:
-          DB_HOST: mysql
-          DB_USER: root
-          DB_PASSWORD: root123
-          DB_NAME: calmspace_db
-        ports:
-          - "5000:5000"
-        command: sh -c "sleep 10 && node Server.js"
+              #!/bin/bash
+              
+              # --- 1. Create 2GB Swap Memory (Prevent Crashes) ---
+              fallocate -l 2G /swapfile
+              chmod 600 /swapfile
+              mkswap /swapfile
+              swapon /swapfile
+              echo '/swapfile none swap sw 0 0' | tee -a /etc/fstab
 
-      frontend:
-        image: pavaniedirisinghe/calmspace-frontend:latest
-        container_name: frontend_c
-        restart: always
-        ports:
-          - "3000:3000"
-        depends_on:
-          - backend
-    
-    volumes:
-      db_data:
-    EOT
+              # --- 2. Install Docker ---
+              apt-get update
+              apt-get install -y docker.io docker-compose-v2
 
-    # Create the init.sql file
-    cat <<EOT >> /home/ubuntu/calmspace/init.sql
-    CREATE DATABASE IF NOT EXISTS calmspace_db;
-    USE calmspace_db;
-    CREATE TABLE IF NOT EXISTS users (
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      name VARCHAR(255) NOT NULL,
-      email VARCHAR(255) UNIQUE NOT NULL,
-      password VARCHAR(255) NOT NULL,
-      role ENUM('student', 'counsellor') DEFAULT 'student',
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS appointments (
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      user_id INT NOT NULL,
-      counsellor_id INT NOT NULL,
-      appointment_date VARCHAR(50) NOT NULL,
-      time_slot VARCHAR(50) NOT NULL,
-      status VARCHAR(20) DEFAULT 'confirmed',
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (user_id) REFERENCES users(id),
-      FOREIGN KEY (counsellor_id) REFERENCES users(id)
-    );
-    EOT
+              # --- 3. Create Project Directory ---
+              mkdir -p /home/ubuntu/calmspace
+              cd /home/ubuntu/calmspace
 
-    # Start the app
-    cd /home/ubuntu/calmspace
-    docker compose up -d
-  EOF
+              # --- 4. Create docker-compose.yml ---
+              cat <<EOT > docker-compose.yml
+              version: '3.8'
+              services:
+                mysql:
+                  image: mysql:8.0
+                  container_name: mysql_c
+                  restart: always                  # <--- KEEPS IT ALIVE
+                  environment:
+                    MYSQL_ROOT_PASSWORD: root123
+                    MYSQL_DATABASE: calmspace_db
+                  ports:
+                    - "3306:3306"
+
+                backend:
+                  image: pavaniedirisinghe/calmspace-backend:latest
+                  container_name: backend_c
+                  restart: always                  # <--- KEEPS IT ALIVE
+                  ports:
+                    - "5000:5000"
+                  depends_on:
+                    - mysql
+
+                frontend:
+                  image: pavaniedirisinghe/calmspace-frontend:latest
+                  container_name: frontend_c
+                  restart: always                  # <--- KEEPS IT ALIVE
+                  ports:
+                    - "3000:3000"
+                  depends_on:
+                    - backend
+              EOT
+
+              # --- 5. Start Everything ---
+              docker compose up -d
+              EOF
 
   tags = {
     Name = "CalmSpace-Server"
