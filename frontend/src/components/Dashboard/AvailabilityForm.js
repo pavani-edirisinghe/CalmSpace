@@ -30,7 +30,7 @@ const AvailabilityForm = () => {
   const user = storedUser ? JSON.parse(storedUser) : null;
   const counsellorId = user?.id;
 
-  const baseUrl = process.env.REACT_APP_API_URL || "http://localhost:5000";
+  const baseUrl = process.env.REACT_APP_API_URL || "http://44.200.76.182:5000";
 
   useEffect(() => {
     const fetchData = async () => {

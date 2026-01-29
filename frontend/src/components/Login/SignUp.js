@@ -23,7 +23,7 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const baseUrl = process.env.REACT_APP_API_URL || "http://localhost:5000";
+      const baseUrl = process.env.REACT_APP_API_URL || "http://44.200.76.182:5000";
       
       console.log("Using API URL:", baseUrl); 
 
