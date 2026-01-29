@@ -21,7 +21,7 @@ CalmSpace is a full-stack web application designed to help users find profession
 
 * **User Authentication:** Secure Signup and Login functionality.
 * **Browse Counselors:** View profiles of available professionals.
-* **Appointment Booking:** (In Progress) Users can schedule sessions.
+* **Appointment Booking:** Users can schedule sessions.
 * **Responsive Design:** Works on mobile and desktop.
 * **Containerized Architecture:** Fully dockerized for consistent deployment.
 
