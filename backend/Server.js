@@ -10,28 +10,30 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-const db = mysql.createConnection({
+// --- 1. USE CONNECTION POOL INSTEAD OF SINGLE CONNECTION ---
+const db = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
+  enableKeepAlive: true,       // Prevents AWS from closing idle connections
+  keepAliveInitialDelay: 0
 });
 
-const connectDB = () => {
-  db.connect((err) => {
-    if (err) {
-      console.error('Database connection failed:', err);
-      console.log('Retrying in 5 seconds...');
-      setTimeout(connectDB, 5000);
-    } else {
-      console.log("MySQL connected successfully!");
-    }
-  });
-};
+// Test the connection when server starts (Optional but good for debugging)
+db.getConnection((err, connection) => {
+  if (err) {
+    console.error("Database connection failed:", err);
+  } else {
+    console.log("MySQL connected successfully via Pool!");
+    connection.release(); // Always release the connection back to the pool
+  }
+});
 
-connectDB();
-
-
+// --- API ENDPOINTS ---
 
 app.post("/api/signup", (req, res) => {
   const { name, email, password, role } = req.body;
@@ -239,8 +241,6 @@ app.post("/api/appointments", (req, res) => {
   });
 
 });
-
-
 
 app.get("/", (req, res) => {
   res.send("Backend is running!");
