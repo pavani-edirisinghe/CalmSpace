@@ -27,7 +27,7 @@ const Home = () => {
           <div className="row">
             <div className="col text-content">
               <h1>
-                 We're <strong>committed</strong> to your <strong>mental well-being.</strong>
+                 We're <strong>committed</strong> to your <strong>Pavani.</strong>
               </h1>
               <p>
                 Book your counselling sessions anytime, anywhere. Our licensed therapists are here to listen and guide you toward a happier, balanced life.
