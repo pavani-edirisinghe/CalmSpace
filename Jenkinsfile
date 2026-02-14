@@ -61,26 +61,7 @@ pipeline {
             }
         }
         
-        stage('Continuous Deployment (CD)') {
-            steps {
-                echo "Deploying newly built containers to AWS..."
-                sh '''
-                # 1. Pull the fresh images from Docker Hub
-                docker pull pavaniedirisinghe/calmspace-frontend:latest
-                docker pull pavaniedirisinghe/calmspace-backend:latest
-
-                # 2. Stop the old containers (|| true prevents pipeline failing if they are already stopped)
-                docker rm -f frontend || true
-                docker rm -f backend || true
-
-                # 3. Start the new Frontend container
-                docker run -d --name frontend --network calmspace-net --restart always -p 3000:3000 pavaniedirisinghe/calmspace-frontend:latest
-
-                # 4. Start the new Backend container
-                docker run -d --name backend --network calmspace-net --restart always -p 5000:5000 -e DB_HOST=mysql_c -e DB_USER=root -e DB_PASSWORD=root -e DB_NAME=calmspace_db pavaniedirisinghe/calmspace-backend:latest
-                '''
-            }
-        }
+        // Optional: The Deployment stage (SSH) we discussed earlier can go here
     }
 
     post {
