@@ -27,13 +27,13 @@ pipeline {
                         
                         // Build & Push Backend
                         dir('backend') {
-                            def backendImage = docker.build("pavaniedirisinghe/calmspace-backend:latest")
+                            def backendImage = docker.build("pavaniedirisinghe/calmspace-backend:latest", "--no-cache .")
                             backendImage.push()
                         }
 
                         // Build & Push Frontend
                         dir('frontend') {
-                            def frontendImage = docker.build("pavaniedirisinghe/calmspace-frontend:latest")
+                            def frontendImage = docker.build("pavaniedirisinghe/calmspace-frontend:latest", "--no-cache .")
                             frontendImage.push()
                         }
                     }
