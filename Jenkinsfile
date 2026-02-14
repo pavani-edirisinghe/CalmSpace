@@ -65,6 +65,10 @@ pipeline {
             steps {
                 echo "Deploying newly built containers to AWS..."
                 sh '''
+                # 0. THE FIX: Make Jenkins create the network automatically if it's missing!
+                docker network create calmspace-net || true
+                docker network connect calmspace-net mysql_c || true
+
                 # 1. Pull the fresh images from Docker Hub
                 docker pull pavaniedirisinghe/calmspace-frontend:latest
                 docker pull pavaniedirisinghe/calmspace-backend:latest
