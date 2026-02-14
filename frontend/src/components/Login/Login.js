@@ -52,7 +52,7 @@ const Login = () => {
       <Navbar />
       <div className="login-container">
         <h2 style={{ textAlign: "center", marginTop: "20px", color: "#2c3e50" }}>
-          Welcome CalmSpace
+          Welcome CalmSpace!
         </h2>
         <h2 style={{ textAlign: "center", marginTop: "30px" }}>Login Page</h2>
 
