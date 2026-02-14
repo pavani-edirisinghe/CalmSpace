@@ -1,0 +1,7 @@
+
+*.zip
+*.tar
+*.mp4
+*.exe
+build/
+node_modules/

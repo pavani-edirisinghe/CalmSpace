@@ -51,6 +51,9 @@ const Login = () => {
     <div>
       <Navbar />
       <div className="login-container">
+        <h1 style={{ textAlign: "center", marginTop: "20px", color: "#2c3e50" }}>
+          Welcome to CalmSpace
+        </h1>
         <h2 style={{ textAlign: "center", marginTop: "30px" }}>Login Page</h2>
 
         <form className="login-form" onSubmit={handleSubmit}>
