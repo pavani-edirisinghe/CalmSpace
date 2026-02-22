@@ -20,7 +20,7 @@ const ProfileForm = () => {
   const userId = user?.id;
   const token = localStorage.getItem("token");
 
-  const baseUrl = process.env.REACT_APP_API_URL || "http://44.200.76.182:5000";
+  const baseUrl = process.env.REACT_APP_API_URL || "http://54.92.192.253:5000";
 
   useEffect(() => {
     const fetchProfile = async () => {

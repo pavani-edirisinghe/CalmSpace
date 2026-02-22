@@ -21,7 +21,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const baseUrl = process.env.REACT_APP_API_URL || "http://44.200.76.182:5000";
+      const baseUrl = process.env.REACT_APP_API_URL || "http://54.92.192.253:5000";
       
       console.log("Login using API URL:", baseUrl); 
 
@@ -51,9 +51,6 @@ const Login = () => {
     <div>
       <Navbar />
       <div className="login-container">
-        <h2 style={{ textAlign: "center", marginTop: "20px", color: "#2c3e50" }}>
-          Welcome CalmSpace!
-        </h2>
         <h2 style={{ textAlign: "center", marginTop: "30px" }}>Login Page</h2>
 
         <form className="login-form" onSubmit={handleSubmit}>
